@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI - Your Ultimate AI Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                    <span>Nexus AI</span>
+                </div>
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <i class="fas fa-plus"></i>
+                    New Chat
+                </button>
+            </div>
+            <div class="chat-history" id="chatHistory">
+                <!-- Chat history items will be added here -->
+            </div>
+            <div class="sidebar-footer">
+                <button class="settings-btn" onclick="openSettings()">
+                    <i class="fas fa-cog"></i>
+                    Settings & API Keys
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="header-title" id="headerTitle">Nexus AI</div>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" id="agentBtn" onclick="toggleAgentMode()">
+                        <i class="fas fa-brain"></i>
+                        Agent Mode
+                    </button>
+                    <button class="header-btn" onclick="openVideoCreator()">
+                        <i class="fas fa-video"></i>
+                        Video Creator
+                    </button>
+                    <button class="header-btn" onclick="clearChat()">
+                        <i class="fas fa-trash"></i>
+                        Clear
+                    </button>
+                </div>
+            </header>
+
+            <!-- Chat Area -->
+            <div class="chat-area" id="chatArea">
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon">
+                        <i class="fas fa-sparkles"></i>
+                    </div>
+                    <h1 class="welcome-title">How can I help you today?</h1>
+                    <p class="welcome-subtitle">
+                        I can chat, write code, build websites, analyze data, generate images, 
+                        create videos, search the web, and much more. Just ask me anything!
+                    </p>
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="sendQuickPrompt('Explain quantum physics in simple terms')">
+                            <i class="fas fa-comments" style="color: #6366f1;"></i>
+                            <h3>Chat & Explain</h3>
+                            <p>Ask anything and get detailed answers</p>
+                        </div>
+                        <div class="feature-card" onclick="sendQuickPrompt('Write a Python script to calculate fibonacci numbers')">
+                            <i class="fas fa-code" style="color: #22c55e;"></i>
+                            <h3>Write Code</h3>
+                            <p>Generate code in any programming language</p>
+                        </div>
+                        <div class="feature-card" onclick="sendQuickPrompt('Create a portfolio website for a photographer')">
+                            <i class="fas fa-globe" style="color: #3b82f6;"></i>
+                            <h3>Build Websites</h3>
+                            <p>Generate complete HTML/CSS/JS websites</p>
+                        </div>
+                        <div class="feature-card" onclick="sendQuickPrompt('Generate an image of a futuristic city at sunset')">
+                            <i class="fas fa-image" style="color: #a855f7;"></i>
+                            <h3>Create Images</h3>
+                            <p>Generate AI images from text descriptions</p>
+                        </div>
+                        <div class="feature-card" onclick="sendQuickPrompt('Create a YouTube video about AI technology with script and thumbnail')">
+                            <i class="fas fa-video" style="color: #ec4899;"></i>
+                            <h3>Video Creator</h3>
+                            <p>Scripts, thumbnails & video prompts</p>
+                        </div>
+                        <div class="feature-card" onclick="sendQuickPrompt('Search the web for latest AI news and summarize')">
+                            <i class="fas fa-search" style="color: #f59e0b;"></i>
+                            <h3>Web Search</h3>
+                            <p>Real-time information from the internet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="messages-container" id="messagesContainer"></div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="typing-text" id="typingText">Nexus is thinking...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <div id="filePreview" style="margin-bottom: 8px;"></div>
+                    <div class="input-wrapper" id="inputWrapper">
+                        <div class="drop-zone" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drop files here to upload</p>
+                        </div>
+                        <div class="input-actions">
+                            <button class="input-action-btn" onclick="document.getElementById('fileInput').click()" title="Upload file">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="file" id="fileInput" style="display: none;" onchange="handleFileUpload(event)" accept=".txt,.pdf,.csv,.json,.png,.jpg,.jpeg,.webp">
+                            <button class="input-action-btn" id="voiceBtn" onclick="toggleVoiceInput()" title="Voice input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="input-action-btn" onclick="sendQuickPrompt('Generate an image of ')" title="Generate image">
+                                <i class="fas fa-image"></i>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Message Nexus AI... (Shift+Enter for new line)"
+                            rows="1"
+                            oninput="autoResize(this)"
+                            onkeydown="handleKeyDown(event)"
+                        ></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-hints">
+                        <span class="hint-chip" onclick="sendQuickPrompt('Create a complete website for a coffee shop')">☕ Build a website</span>
+                        <span class="hint-chip" onclick="sendQuickPrompt('Write a Python data analysis script')">🐍 Python code</span>
+                        <span class="hint-chip" onclick="sendQuickPrompt('Generate a professional logo SVG')">🎨 Create logo</span>
+                        <span class="hint-chip" onclick="sendQuickPrompt('Analyze this data and create charts')">📊 Data analysis</span>
+                        <span class="hint-chip" onclick="sendQuickPrompt('Create a YouTube video script about AI')">🎬 Video script</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ Settings & API Keys</div>
+                <button class="modal-close" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">🤖 Groq API Key (Required for Chat)</label>
+                    <input type="password" class="form-input" id="groqKey" placeholder="gsk_...">
+                    <p class="form-hint">Get your free key from <a href="https://console.groq.com" target="_blank" style="color: var(--accent-light);">console.groq.com</a>. Free tier: 1,500 requests/day!</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🔍 Tavily API Key (Optional - Web Search)</label>
+                    <input type="password" class="form-input" id="tavilyKey" placeholder="tvly-...">
+                    <p class="form-hint">Get from <a href="https://tavily.com" target="_blank" style="color: var(--accent-light);">tavily.com</a> - 1,000 free searches/month</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🌤️ OpenWeather API Key (Optional - Weather)</label>
+                    <input type="password" class="form-input" id="weatherKey" placeholder="...">
+                    <p class="form-hint">Get from <a href="https://openweathermap.org/api" target="_blank" style="color: var(--accent-light);">openweathermap.org</a> - Free tier available</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📰 NewsData API Key (Optional - News)</label>
+                    <input type="password" class="form-input" id="newsKey" placeholder="...">
+                    <p class="form-hint">Get from <a href="https://newsdata.io" target="_blank" style="color: var(--accent-light);">newsdata.io</a> - Free tier available</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">🤗 Hugging Face Token (Optional - Advanced Models)</label>
+                    <input type="password" class="form-input" id="hfKey" placeholder="hf_...">
+                    <p class="form-hint">Get from <a href="https://huggingface.co/settings/tokens" target="_blank" style="color: var(--accent-light);">huggingface.co</a></p>
+                </div>
+                <button class="save-btn" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Creator Modal -->
+    <div class="modal-overlay" id="videoModal">
+        <div class="modal" style="max-width: 700px;">
+            <div class="modal-header">
+                <div class="modal-title">🎬 AI Video Creator</div>
+                <button class="modal-close" onclick="closeVideoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Video Topic</label>
+                    <input type="text" class="form-input" id="videoTopic" placeholder="e.g., 'The Future of AI in 2026'">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Video Style</label>
+                    <select class="form-input" id="videoStyle">
+                        <option value="educational">Educational / Explainer</option>
+                        <option value="entertainment">Entertainment / Fun</option>
+                        <option value="tutorial">Tutorial / How-To</option>
+                        <option value="news">News / Commentary</option>
+                        <option value="story">Storytelling / Narrative</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Target Duration</label>
+                    <select class="form-input" id="videoDuration">
+                        <option value="short">Short (1-3 min) - YouTube Shorts/TikTok</option>
+                        <option value="medium" selected>Medium (5-10 min) - Standard YouTube</option>
+                        <option value="long">Long (15-30 min) - Deep Dive</option>
+                    </select>
+                </div>
+                <button class="save-btn" onclick="generateVideoContent()">
+                    <i class="fas fa-magic"></i> Generate Complete Video Package
+                </button>
+
+                <div id="videoOutput" style="margin-top: 24px; display: none;">
+                    <h3 style="margin-bottom: 16px; font-size: 18px;">📦 Your Video Package</h3>
+                    <div class="video-steps" id="videoSteps"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
